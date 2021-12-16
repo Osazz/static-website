@@ -1,0 +1,33 @@
+name: 'Terraform'
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+jobs:
+  terraform_format:
+    name: Deploy Site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v1
+      - name: Terraform Plan
+        run: |
+          terraform -v 
+      
+      - name: Terraform Init
+        uses: hashicorp/terraform-github-actions/init@v0.4.0
+        env:
+          TF_ACTION_WORKING_DIR: 'terraform_code'
+          AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Terraform Validate
+        uses: hashicorp/terraform-github-actions/validate@v0.3.7
+
+      - name: Terraform Plan
+        uses: hashicorp/terraform-github-actions/plan@v0.4.0
+        env:
+          TF_ACTION_WORKING_DIR: 'terraform_code'
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
